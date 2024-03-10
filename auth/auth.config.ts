@@ -1,4 +1,3 @@
-import Email from "next-auth/providers/email";
 import {NextAuthConfig} from "next-auth";
 import {DrizzleAdapter} from "@auth/drizzle-adapter";
 
@@ -10,20 +9,7 @@ export const authConfig = {
   session: {
     strategy: "jwt",
   },
-
-  providers: [
-    Email({
-      server: {
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT),
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD,
-        },
-      },
-      from: process.env.EMAIL_FROM,
-    }),
-  ],
+  providers: [],
   callbacks: {
     authorized({auth, request: {nextUrl}}) {
       const isLoggedIn = !!auth?.user;
@@ -31,7 +17,9 @@ export const authConfig = {
       const isProtected = path.some((path) => nextUrl.pathname.startsWith(path));
 
       if (!isLoggedIn && isProtected) {
-        return false;
+        const redirectUrl = new URL("/signin", nextUrl.origin);
+
+        return Response.redirect(redirectUrl);
       }
 
       return true;
