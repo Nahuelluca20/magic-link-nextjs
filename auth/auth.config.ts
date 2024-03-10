@@ -17,9 +17,7 @@ export const authConfig = {
       const isProtected = path.some((path) => nextUrl.pathname.startsWith(path));
 
       if (!isLoggedIn && isProtected) {
-        const redirectUrl = new URL("/signin", nextUrl.origin);
-
-        return Response.redirect(redirectUrl);
+        return false;
       }
 
       return true;
