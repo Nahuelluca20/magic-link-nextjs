@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Email from "next-auth/providers/email";
+import Google from "next-auth/providers/google";
 
 import {authConfig} from "./auth.config";
 
@@ -11,6 +12,17 @@ export const {
 } = NextAuth({
   ...authConfig,
   providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
+    }),
     Email({
       server: {
         host: process.env.SMTP_HOST,
